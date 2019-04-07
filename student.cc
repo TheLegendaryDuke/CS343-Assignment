@@ -4,6 +4,8 @@ using namespace std;
 
 MPRNG mprng;
 
+extern int sodaCost;
+
 Student::Student(Printer & prt, NameServer & nameServer, WATCardOffice & cardOffice, Groupoff & groupoff, unsigned int id, unsigned int maxPurchases):nameServer(nameServer),cardOffice(cardOffice),groupoff(groupoff),id(id),maxPurchases(maxPurchases),printer(prt) {}
 
 void Student::main() {
