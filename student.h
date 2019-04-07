@@ -6,6 +6,7 @@
 #include "printer.h"
 #include "MPRNG.h"
 #include <uFuture.h>
+#include "vendingmachine.h"
 
 _Task Student {
   void main();

@@ -2,15 +2,13 @@
 
 using namespace std;
 
-MPRNG mprng;
-
-extern int sodaCost;
+extern MPRNG mprng;
 
 Student::Student(Printer & prt, NameServer & nameServer, WATCardOffice & cardOffice, Groupoff & groupoff, unsigned int id, unsigned int maxPurchases):nameServer(nameServer),cardOffice(cardOffice),groupoff(groupoff),id(id),maxPurchases(maxPurchases),printer(prt) {}
 
 void Student::main() {
   int numToBuy = mprng(1,maxPurchases);
-  int flavour = mprng(3);
+  VendingMachine::Flavours flavour = static_cast<VendingMachine::Flavours>(mprng(3));
   WATCard::FWATCard watCard = cardOffice.create(id,5);
   WATCard::FWATCard giftcard = groupoff.giftCard();
   VendingMachine* vm = nameServer.getMachine(id);
@@ -30,7 +28,7 @@ void Student::main() {
       vm->buy(flavour, *card);
       if(usingGiftcard) giftcard.reset();
     }catch (VendingMachine::Funds) {
-      watCard = cardOffice.transfer(id, sodaCost+5, card);
+      watCard = cardOffice.transfer(id, vm->cost()+5, card);
       i--;
     }catch (VendingMachine::Stock) {
       vm = nameServer.getMachine(id);

@@ -18,7 +18,7 @@ _Task VendingMachine {
     bool restocking;
     void main();
   public:
-    enum Flavours { luesBlack_Cherry, Classic_Cream_Soda, Rock_Root_Beer, Jazz_Lime };
+    enum Flavours { luesBlack_Cherry=0, Classic_Cream_Soda=1, Rock_Root_Beer=2, Jazz_Lime=3 };
     _Event Free {};
     _Event Funds {};
     _Event Stock {}; 

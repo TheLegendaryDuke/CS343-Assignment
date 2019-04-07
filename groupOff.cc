@@ -16,7 +16,7 @@ void Groupoff::main() {
     _Accept(~Groupoff) {
       break;
     }_Else {
-      if(luckies == count) _Accept(giftcard);
+      if(luckies == count) _Accept(giftCard);
       yield(groupoffDelay);
       int luckyOne = mprng(luckies, count-1);
       WATCard::FWATCard* temp = cards[luckyOne];
