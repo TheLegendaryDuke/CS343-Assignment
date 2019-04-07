@@ -1,6 +1,6 @@
 #ifndef STUDENT_H
 #define STUDENT_H
-#include "nameServer.h"
+#include "nameserver.h"
 #include "cardOffice.h"
 #include "groupOff.h"
 #include "printer.h"
