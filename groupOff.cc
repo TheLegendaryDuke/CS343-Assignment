@@ -2,6 +2,8 @@
 
 using namespace std;
 
+extern MPRNG mprng;
+
 Groupoff::Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay ):printer(prt),numStudents(numStudents),sodaCost(sodaCost),groupoffDelay(groupoffDelay){
   cards = new WATCard::FWATCard*[numStudents];
   for(int i = 0; i < numStudents; i++) {
@@ -26,8 +28,8 @@ void Groupoff::main() {
   }
 }
 
-WATCard::FWATCard Groupoff::giftcard() {
+WATCard::FWATCard Groupoff::giftCard() {
   int temp = count;
   count++;
-  return cards[temp];
+  return *cards[temp];
 }
