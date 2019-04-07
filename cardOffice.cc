@@ -1,34 +1,49 @@
 #include "cardOffice.h"
+#include <assert.h>
 
 using namespace std;
 
+extern MPRNG mprng;
+
 WATCardOffice::WATCardOffice( Printer & prt, Bank & bank, unsigned int numCouriers ):printer(prt),bank(bank),numCouriers(numCouriers) {
+  sem.P();
   couriers = new Courier*[numCouriers];
   for(int i = 0; i < numCouriers; i++) {
-    couriers[i] = new Courier();
+    couriers[i] = new Courier(*this, bank);
   }
 }
 
 WATCard::FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
   cards[sid] = new WATCard::FWATCard();
-  Job* job = new Job({create,amount,sid});
+  Job::Args args;
+  args.op = Job::Args::Operation::create;
+  args.amount = amount;
+  args.id = sid;
+  Job* job = new Job(args);
   job->result = *cards[sid];
   jobs.push(job);
   sem.V();
   return *cards[sid];
 }
 
-WATCard::FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount) {
-  Job* job= new Job({transfer, amount, sid});
+WATCard::FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard *card ) {
+  assert(card==(*cards[sid])());
+  Job::Args args;
+  args.op = Job::Args::Operation::transfer;
+  args.amount = amount;
+  args.id = sid;
+  Job* job= new Job(args);
   job->result = *cards[sid];
   jobs.push(job);
   sem.V();
   return *cards[sid];
 }
 
-Job* WATCardOffice::requestWork() {
+WATCardOffice::Job* WATCardOffice::requestWork() {
   sem.P();
-  return jobs.pop();
+  Job* result = jobs.front();
+  jobs.pop();
+  return result;
 }
 
 void WATCardOffice::main() {
@@ -39,19 +54,22 @@ void WATCardOffice::main() {
 
 void WATCardOffice::Courier::main() {
   while(true) {
-    Job& job = *requestWork();
+    Job& job = *(server.requestWork());
     switch(job.args.op) {
-      case create:
+      case Job::Args::Operation::create:
+      {
         bank.withdraw(job.args.id, job.args.amount);
         WATCard* card = new WATCard();
         card->deposit(job.args.amount);
-        if(mprng(6) % 6 == 0) job.result.exception(WATCardOffice::Lost{}); 
+        if(mprng(6) % 6 == 0) job.result.exception(new WATCardOffice::Lost()); 
         else job.result.delivery(card);
         break;
-      case transfer:
+      }
+      case Job::Args::Operation::transfer:
         bank.withdraw(job.args.id, job.args.amount);
-        if(mprng(6) % 6 == 0) job.result.exception(WATCardOffice::Lost{});
+        if(mprng(6) % 6 == 0) job.result.exception(new WATCardOffice::Lost());
         else job.result()->deposit(job.args.amount);
         break;
     }
+  }
 }
