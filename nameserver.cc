@@ -1,46 +1,46 @@
 #include "vendingmachine.h"
 
-NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ) :
-  prt(prt), numStudents(numStudents), numMachines(numVendingMachines), numRegisteredMachines(0) {
-  assignments = new int[numStudents];
-  machines = new VendingMachine*[numMachines];
+NameServer::NameServer( Printer &printer, unsigned int numVendingMachines, unsigned int numStudents ) :
+  printer(printer), numStudents(numStudents), numVendingMachines(numVendingMachines) {
+  MachineMap = new unsigned int[numStudents];
+  Machines = new VendingMachine*[numVendingMachines];
 
   for (unsigned int i = 0; i < numStudents; i++) {
-    assignments[i] = i%numMachines;
+    MachineMap[i] = i%numVendingMachines;
   }
 }
 
 NameServer::~NameServer() {
-  delete [] assignments;
-  delete [] machines;
+  delete [] MachineMap;
+  delete [] Machines;
 }
 
 void NameServer::main() {
-  prt.print(Printer::NameServer, "S");
+  printer.print(Printer::NameServer, 'S');
 
   while (true) {
     _Accept(~NameServer) break;
-    or _When(numRegisteredMachines == numMachines) _Accept(getMachine, getMachineList);
-    or _When(numRegisteredMachines < numMachines) _Accept(VMregister);
+    or _When(registed == numVendingMachines) _Accept(getMachine, getMachineList);
+    or _When(registed < numVendingMachines) _Accept(VMregister);
   }
 
-  prt.print(Printer::NameServer, "F");
+  printer.print(Printer::NameServer, 'F');
 }
 
 void NameServer::VMregister( VendingMachine *vendingmachine ) {
   int id = vendingmachine->getId();
-  prt.print(Printer::NameServer, "R", id);
-  machines[numRegisteredMachines++] = vendingmachine;
+  printer.print(Printer::NameServer, 'R', id);
+  Machines[registed++] = vendingmachine;
 }
 
 VendingMachine *NameServer::getMachine( unsigned int id ) {
-  VendingMachine *ret = machines[assignments[id]];
-  prt.print(Printer::NameServer, "N", id, ret->getId());
-  assignments[id] = (assignments[id] + 1) % numMachines;
+  VendingMachine *ret = Machines[MachineMap[id]];
+  printer.print(Printer::NameServer, 'N', id, ret->getId());
+  MachineMap[id] = (MachineMap[id] + 1) % numVendingMachines;
 
   return ret;
 }
 
 VendingMachine **NameServer::getMachineList() {
-  return machines;
+  return Machines;
 }

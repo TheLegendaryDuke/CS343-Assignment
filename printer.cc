@@ -1,16 +1,19 @@
 #include "printer.h"
+#include <iostream>
 using namespace std;
 
 std::ostream& operator<<(std::ostream& out, Data &data) {
     out << (char)data.state;
-    if (value1 != -1) out << value1;
-    if (value2 != -1) out << "," << value2;
+    if (data.value1 != -1) out << data.value1;
+    if (data.value2 != -1) out << "," << data.value2;
     return out;
 }
 
 
-Printer::Printer( unsigned int numStudents, unsigned int numVendingMachines, unsigned int numCouriers ) {
-    numOfVoters = voters;
+Printer::Printer( unsigned int numStudents, unsigned int numVendingMachines, unsigned int numCouriers ) :
+  numStudents(numStudents),
+  numVendingMachines(numVendingMachines),
+  numCouriers(numCouriers) {
     buffer = new Data[numStudents + numVendingMachines + numCouriers + 6];
 
     cout << "Parent" << '\t';
@@ -52,10 +55,10 @@ Printer::~Printer() {
 }
 
 void Printer::flush() {
-    unsigned int last_index = numOfVoters-1;
-    for (unsigned int i = 0; i < numOfVoters; i++) {
-        if (buffer[numOfVoters - i - 1].exist) {
-            last_index = numOfVoters - i - 1;
+    unsigned int last_index = numStudents + numVendingMachines + numCouriers + 6-1;
+    for (unsigned int i = 0; i < numStudents + numVendingMachines + numCouriers + 6; i++) {
+        if (buffer[numStudents + numVendingMachines + numCouriers + 6 - i - 1].exist) {
+            last_index = numStudents + numVendingMachines + numCouriers + 6 - i - 1;
             break;
         }
     }
@@ -71,6 +74,13 @@ void Printer::flush() {
 
 void Printer::check_flush(unsigned int i) {
     if (buffer[i].exist) flush();
+}
+
+unsigned int Printer::getBufferIndex( Kind kind) {
+  if (kind != Student && kind != Vending && kind != Courier) {
+    return (int) kind;
+  }
+  return 0;
 }
 
 unsigned int Printer::getBufferIndex( Kind kind, unsigned int lid ) {
@@ -89,16 +99,16 @@ unsigned int Printer::getBufferIndex( Kind kind, unsigned int lid ) {
 }
 
 void Printer::print( Kind kind, char state ) {
-    unsigned int idx = getBufferIndex(kind);
-    check_flush();
+    unsigned int id = getBufferIndex(kind);
+    check_flush(id);
     buffer[id].kind = kind;
     buffer[id].state = state;
     buffer[id].exist = true;
 }
 
 void Printer::print( Kind kind, char state, int value1 ) {
-    unsigned int idx = getBufferIndex(kind);
-    check_flush();
+    unsigned int id = getBufferIndex(kind);
+    check_flush(id);
     buffer[id].kind = kind;
     buffer[id].state = state;
     buffer[id].exist = true;
@@ -106,8 +116,8 @@ void Printer::print( Kind kind, char state, int value1 ) {
 }
 
 void Printer::print( Kind kind, char state, int value1, int value2 ) {
-    unsigned int idx = getBufferIndex(kind);
-    check_flush();
+    unsigned int id = getBufferIndex(kind);
+    check_flush(id);
     buffer[id].kind = kind;
     buffer[id].state = state;
     buffer[id].exist = true;
@@ -116,31 +126,31 @@ void Printer::print( Kind kind, char state, int value1, int value2 ) {
 }
 
 void Printer::print( Kind kind, unsigned int lid, char state ) {
-    unsigned int idx = getBufferIndex(kind);
-    check_flush();
+    unsigned int id = getBufferIndex(kind, lid);
+    check_flush(id);
     buffer[id].kind = kind;
     buffer[id].state = state;
     buffer[id].exist = true;
-    buffer[id].lib = lib;
+    buffer[id].lid = lid;
 }
 
 void Printer::print( Kind kind, unsigned int lid, char state, int value1 ) {
-    unsigned int idx = getBufferIndex(kind);
-    check_flush();
+    unsigned int id = getBufferIndex(kind, lid);
+    check_flush(id);
     buffer[id].kind = kind;
     buffer[id].state = state;
     buffer[id].exist = true;
     buffer[id].value1 = value1;
-    buffer[id].lib = lib;
+    buffer[id].lid = lid;
 }
 
 void Printer::print( Kind kind, unsigned int lid, char state, int value1, int value2 ) {
-    unsigned int idx = getBufferIndex(kind);
-    check_flush();
+    unsigned int id = getBufferIndex(kind, lid);
+    check_flush(id);
     buffer[id].kind = kind;
     buffer[id].state = state;
     buffer[id].exist = true;
     buffer[id].value1 = value1;
     buffer[id].value2  = value2;
-    buffer[id].lib = lib;
+    buffer[id].lid = lid;
 }
