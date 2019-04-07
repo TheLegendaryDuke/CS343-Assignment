@@ -10,7 +10,7 @@ WATCardOffice::WATCardOffice( Printer & prt, Bank & bank, unsigned int numCourie
   sem.P();
   couriers = new Courier*[numCouriers];
   for(int i = 0; i < numCouriers; i++) {
-    couriers[i] = new Courier(*this, bank);
+    couriers[i] = new Courier(*this, bank, printer);
   }
 }
 

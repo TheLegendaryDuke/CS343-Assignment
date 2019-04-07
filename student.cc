@@ -11,9 +11,10 @@ void Student::main() {
   VendingMachine::Flavours flavour = static_cast<VendingMachine::Flavours>(mprng(3));
   printer.print(Printer::Kind::Student, 'S', flavour, numToBuy);
   bool cardLost = true;
+  WATCard::FWATCard watCard;
   while(cardLost) {
     try {
-      WATCard::FWATCard watCard = cardOffice.create(id,5);
+      watCard = cardOffice.create(id,5);
       cardLost = false;
     }catch (WATCardOffice::Lost) {
       printer.print(Printer::Kind::Student, 'L');

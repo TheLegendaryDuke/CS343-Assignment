@@ -27,8 +27,10 @@ _Task WATCardOffice {
     WATCardOffice& server;
     Bank& bank;
     void main();
+    Printer& printer;
   public:
-    Courier(WATCardOffice& server, Bank& bank):server(server),bank(bank) {}
+    Courier(WATCardOffice& server, Bank& bank, Printer& printer):server(server),bank(bank),printer(printer) {}
+    ~Courier();
   }; // communicates with bank
   Printer& printer;
   void main();
@@ -45,5 +47,6 @@ public:
   WATCard::FWATCard transfer( unsigned int sid, unsigned int amount, WATCard *
 card );
   Job *requestWork();
+  ~WATCardOffice();
 };
 #endif
