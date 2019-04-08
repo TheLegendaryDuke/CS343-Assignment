@@ -60,14 +60,11 @@ void WATCardOffice::main() {
             }
             
             for (unsigned int i = 0; i < numCouriers; ++i) {
-                cout << "del " << i << endl;
                 _Accept(requestWork);
             }
-            cout << "del "  << endl;
             for (unsigned int i = 0; i < numCouriers; ++i) {
                 delete couriers[i];
             }
-            cout << "delete2" << endl;
             delete[] couriers;
             break;
         } or _Accept(create, transfer) {
@@ -79,7 +76,6 @@ void WATCardOffice::main() {
 
 
 WATCardOffice::~WATCardOffice() {
-    cout << "deleteeee "  << endl;
     printer.print(Printer::Kind::WATCardOffice, 'F');
 }
 
@@ -111,6 +107,7 @@ void WATCardOffice::Courier::main() {
                 printer.print(Printer::Kind::Courier, 'T', job.args.id, job.args.amount);
                 break;
         }
+        delete job_pt;
     }
 }
 WATCardOffice::Courier::~Courier() {

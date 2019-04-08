@@ -1,0 +1,22 @@
+
+*** These modified files were found in JOE when it aborted on Sun Apr  7 18:33:05 2019
+*** JOE was aborted because the terminal closed
+
+*** File '/u0/m67zhu/cs343-final/CS343-Assignment/.git/MERGE_MSG'
+Merge branch 'master' of https://github.com/TheLegendaryDuke/CS343-Assignment
+
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit.
+
+*** File '(Unnamed)'
+/u0/m67zhu/cs343-final/CS343-Assignment/.git/MERGE_MSG
+/u0/m67zhu/cs343-final/CS343-Assignment/.git/MERGE_MSG
+
+*** File '* Startup Log *'
+Processing '/etc/joe/editorrc'...
+Processing '/etc/joe/ftyperc'...
+Finished processing /etc/joe/ftyperc
+Finished processing /etc/joe/editorrc

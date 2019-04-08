@@ -24,7 +24,6 @@ BottlingPlant::~BottlingPlant() {
 
 void BottlingPlant::getShipment( unsigned int cargo[] ) {
   if (closed) {
-      std::cout << "abc" << std::endl;
     uRendezvousAcceptor();
     _Throw Shutdown();
   }
@@ -50,7 +49,6 @@ void BottlingPlant::main() {
     } _Else {
       yield(timeBetweenShipments);
 
-      // produce soda
       unsigned int count = 0;
       for (unsigned int f = 0; f < 4; ++f) {
         stock[f] = mprng(maxStockPerFlavour);
