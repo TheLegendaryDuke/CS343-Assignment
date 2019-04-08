@@ -1,4 +1,5 @@
 #include "vendingmachine.h"
+#include <iostream>
 
 NameServer::NameServer( Printer &printer, unsigned int numVendingMachines, unsigned int numStudents ) :
   printer(printer), numStudents(numStudents), numVendingMachines(numVendingMachines) {
@@ -34,6 +35,7 @@ void NameServer::VMregister( VendingMachine *vendingmachine ) {
 }
 
 VendingMachine *NameServer::getMachine( unsigned int id ) {
+    std::cout << "get machine" << std::endl;
   VendingMachine *ret = Machines[MachineMap[id]];
   printer.print(Printer::NameServer, 'N', id, ret->getId());
   MachineMap[id] = (MachineMap[id] + 1) % numVendingMachines;

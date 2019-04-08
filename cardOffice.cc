@@ -7,7 +7,6 @@ extern MPRNG mprng;
 
 WATCardOffice::WATCardOffice( Printer & prt, Bank & bank, unsigned int numCouriers ):printer(prt),bank(bank),numCouriers(numCouriers) {
   printer.print(Printer::Kind::WATCardOffice, 'S');
-  sem.P();
   couriers = new Courier*[numCouriers];
   for(int i = 0; i < numCouriers; i++) {
     couriers[i] = new Courier(*this, bank, printer);
@@ -23,7 +22,6 @@ WATCard::FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount )
   Job* job = new Job(args);
   job->result = *cards[sid];
   jobs.push(job);
-  sem.V();
   printer.print(Printer::Kind::WATCardOffice, 'C', sid, amount);
   return *cards[sid];
 }
@@ -37,13 +35,11 @@ WATCard::FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount
   Job* job= new Job(args);
   job->result = *cards[sid];
   jobs.push(job);
-  sem.V();
   printer.print(Printer::Kind::WATCardOffice, 'T', sid, amount);
   return *cards[sid];
 }
 
 WATCardOffice::Job* WATCardOffice::requestWork() {
-  sem.P();
   Job* result = jobs.front();
   jobs.pop();
   printer.print(Printer::Kind::WATCardOffice, 'W');
@@ -51,7 +47,28 @@ WATCardOffice::Job* WATCardOffice::requestWork() {
 }
 
 void WATCardOffice::main() {
-  
+  printer.print(Printer::WATCardOffice, 'S');
+
+  for (;;) {
+    _Accept(~WATCardOffice) {
+      for (;;) {
+        if (jobs.empty()) break;
+        delete jobs.front();
+        jobs.pop();
+      }
+      for (unsigned int i = 0; i < numCouriers; ++i) {
+        _Accept(requestWork);
+      }
+      for (unsigned int i = 0; i < numCouriers; ++i) {
+        delete couriers[i];
+      }
+      delete[] couriers;
+      break;
+    } or _Accept(create, transfer) {
+    } or _When(!jobs.empty()) _Accept(requestWork) {}
+  }
+
+  printer.print(Printer::WATCardOffice, 'F');
 }
 
 
@@ -77,7 +94,7 @@ void WATCardOffice::Courier::main() {
         printer.print(Printer::Kind::Courier, 't', job.args.id, job.args.amount); 
         bank.withdraw(job.args.id, job.args.amount);
         if(mprng(6) % 6 == 0) {
-          printer.print(Printer::Kind::Courier, 'L', job.args.id);
+          printer.print(Printer::Kind::Courier, 'O', job.args.id);
           job.result.exception(new WATCardOffice::Lost());
         } else job.result()->deposit(job.args.amount);
         printer.print(Printer::Kind::Courier, 'T', job.args.id, job.args.amount);

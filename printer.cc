@@ -65,8 +65,12 @@ void Printer::flush() {
     for (unsigned int i = 0; i <= last_index; i++) {
         if (i != 0) std::cout << '\t';
         if (buffer[i].exist) {
+#ifndef DEBUG
             std::cout << buffer[i];
+#endif
             buffer[i].exist = false;
+            buffer[i].value1 = -1;
+            buffer[i].value2 = -1;
         }
     }
     std::cout << std::endl;
@@ -146,6 +150,7 @@ void Printer::print( Kind kind, unsigned int lid, char state, int value1 ) {
 
 void Printer::print( Kind kind, unsigned int lid, char state, int value1, int value2 ) {
     unsigned int id = getBufferIndex(kind, lid);
+    std::cout << "id" << id << std::endl;
     check_flush(id);
     buffer[id].kind = kind;
     buffer[id].state = state;

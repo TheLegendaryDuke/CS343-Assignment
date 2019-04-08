@@ -28,18 +28,17 @@ void VendingMachine::buy( Flavours flavour, WATCard & card ) {
   } else {
     card.withdraw(sodaCost);
     stocks[(unsigned int)flavour]--;
+      cout << "bbb" << endl;
     printer.print(Printer::Vending, id, 'B', (unsigned int)flavour, stocks[(unsigned int)flavour]);
   }
 }
 
 unsigned int * VendingMachine::inventory() {
-    restocking = true;
   printer.print(Printer::Vending, id, 'r');
   return stocks;
 }
 
 void VendingMachine::restocked() {
-    restocking = false;
   printer.print(Printer::Vending, id, 'R');
 }
 
@@ -61,7 +60,10 @@ void VendingMachine::main() {
       _Accept(~VendingMachine) {
         break;
       } or _Accept(restocked) {
-      } or _When (!restocking) _Accept(buy, inventory); 
+          restocking = false;
+      } or _Accept(inventory) {
+          restocking = true;
+      } or _When (!restocking) _Accept(buy); 
     } catch (uMutexFailure::RendezvousFailure) {}
   }
   printer.print(Printer::Vending, id, 'F');
