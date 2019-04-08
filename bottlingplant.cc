@@ -24,6 +24,7 @@ BottlingPlant::~BottlingPlant() {
 
 void BottlingPlant::getShipment( unsigned int cargo[] ) {
   if (closed) {
+      std::cout << "abc" << std::endl;
     uRendezvousAcceptor();
     _Throw Shutdown();
   }

@@ -57,12 +57,13 @@ int main( int argc, char *argv[] ) {
   processConfigFile(configFile.c_str(), config);
 
   Printer printer(config.numStudents, config.numVendingMachines, config.numCouriers);
+      Bank * bank_pt = new Bank(config.numStudents);
+    {
 
-  Bank bank(config.numStudents);
 
-  Parent parent(printer, bank, config.numStudents, config.parentalDelay);
+  Parent* parent_pt = new Parent(printer, *bank_pt, config.numStudents, config.parentalDelay);
 
-  WATCardOffice office(printer, bank, config.numCouriers);
+  WATCardOffice* office_pt = new WATCardOffice(printer, *bank_pt, config.numCouriers);
 
   NameServer nameServer(printer, config.numVendingMachines, config.numStudents);
 
@@ -78,7 +79,7 @@ int main( int argc, char *argv[] ) {
 
   Student* students[config.numStudents];
   for (unsigned int i = 0; i < config.numStudents; ++i) {
-    students[i] = new Student(printer, nameServer, office, groupoff, i, config.maxPurchases);
+    students[i] = new Student(printer, nameServer, *office_pt, groupoff, i, config.maxPurchases);
   }
 
   for (unsigned int i = 0; i < config.numStudents; ++i) {
@@ -90,4 +91,10 @@ int main( int argc, char *argv[] ) {
   for (unsigned int i = 0; i < config.numVendingMachines; ++i) {
     delete vendingMachines[i];
   }
+        delete office_pt;
+        delete parent_pt;
+        
+ }
+    delete bank_pt;
+  std::cout << "finish" << std::endl;
 }

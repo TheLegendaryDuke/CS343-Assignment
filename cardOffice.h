@@ -40,6 +40,7 @@ _Task WATCardOffice {
   uSemaphore sem;
   Bank& bank;
   unsigned int numCouriers;
+    bool finished = false;
 public:
   _Event Lost {}; // lost WATCard
   WATCardOffice( Printer & prt, Bank & bank, unsigned int numCouriers );
